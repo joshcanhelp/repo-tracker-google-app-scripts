@@ -1,0 +1,29 @@
+{
+  "timeZone": "America/Los_Angeles",
+  "dependencies": {},
+  "exceptionLogging": "STACKDRIVER",
+  "sheets": {
+    "macros": [
+      {
+        "menuName": "Update row",
+        "functionName": "updateRow",
+        "defaultShortcut": "Ctrl+Alt+Shift+1"
+      },
+      {
+        "menuName": "Save GitHub API token",
+        "functionName": "saveGitHubApiToken"
+      },
+      {
+        "menuName": "Save Codecov API token",
+        "functionName": "saveCodecovApiToken"
+      }
+    ]
+  },
+  "executionApi": {
+    "access": "ANYONE"
+  },
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/script.external_request",
+    "https://www.googleapis.com/auth/spreadsheets"
+  ]
+}
