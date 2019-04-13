@@ -40,6 +40,7 @@ function updateRow() {
   }
 
   for (currRow; currRow <= bottomRow; currRow++) {
+
     if (currRow <= 2) {
       Browser.msgBox("Cannot update header row!");
       return;
@@ -57,9 +58,14 @@ function updateRow() {
     // Update the release information automatically.
     var useReleaseFeed = true;
 
+    // Row-level information for package data.
+    var packageSite = '';
+    var packageName = '';
+
     // API call objects.
     var github = new GitHub(repoName);
     var codecov = new Codecov(repoName);
+    var package = new Package();
 
     // All data.
     var allData = {
@@ -73,19 +79,32 @@ function updateRow() {
     allData.readme = github.getReadmeScore(allData.comm.readme_url);
 
     dataPoints.forEach(function(el) {
-      var doUpdate = true;
+      var updateCell = true;
+      var currentVal = sheet.getValue(currRow, currCol);
+      
+      allData.package_name = currentVal;
+      if ("package_name" === el && 'N/A' !== currentVal) {
+        var packageParts = currentVal.split(':');
+        packageSite = packageParts[0];
+        packageName = packageParts[1];
+        allData.package_name = '=HYPERLINK("' + package[packageSite + 'Url'](packageName) + '","' + currentVal + '")';
+      }
 
-      if ("use_release_feed" === el) {
-        useReleaseFeed =
-          "yes" === sheet.getValue(currRow, currCol).toLowerCase();
-        doUpdate = false;
+      allData.package_downloads = currentVal;
+      if ("package_downloads" === el && 'N/A' !== currentVal) {
+        allData.package_downloads = package[packageSite + 'Stats'](packageName);
       }
 
       if (el.indexOf("release|") === 0 && !useReleaseFeed) {
-        doUpdate = false;
+        updateCell = false;
       }
 
-      if (doUpdate) {
+      if ("use_release_feed" === el) {
+        useReleaseFeed = ("yes" === currentVal.toLowerCase());
+        updateCell = false;
+      }
+
+      if (updateCell) {
         var dataPoint = el.split("|");
         var value = allData[dataPoint[0]];
         if (typeof dataPoint[1] !== "undefined") {

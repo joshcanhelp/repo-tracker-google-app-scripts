@@ -26,8 +26,9 @@ SheetUtil.prototype.getValues = function(range) {
  * @param {integer} row - The row number, 1-based.
  * @param {integer} col - The column number, 1-based.
  */
-SheetUtil.prototype.getValue = function(row, col) {
-  return this.sheet.getRange(row, col).getValue();
+SheetUtil.prototype.getValue = function(row, col, lower) {
+  var value = this.sheet.getRange(row, col).getValue();
+  return lower ? value.toString().toLowerCase() : value;
 };
 
 /**
