@@ -8,9 +8,17 @@
  */
 function Package() {}
 
-Package.prototype.getPackageName = function(package) {
-  var packageParts = package.split(':');
-  return packageParts[1];
+Package.prototype.getPackageDownloads = function(packageString) {
+  var packageParts = packageString.split(':');
+  var packageSite = packageParts[0];
+  var packageName = packageParts[1];
+
+  var packageUrl = this[packageSite + 'Url'](packageName);
+  var packageStats = this[packageSite + 'Stats'](packageName);
+  packageStats = parseInt(packageStats, 10);
+
+  var packageStatsText = packageStats ? 'CONCATENATE(TEXT(' + packageStats + ', "#,###"), " [View]")' : '"[View]"';
+  return '=HYPERLINK("' + packageUrl + '",' + packageStatsText + ')';
 }
 
 Package.prototype.npmUrl = function(name) {

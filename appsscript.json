@@ -10,6 +10,11 @@
         "defaultShortcut": "Ctrl+Alt+Shift+1"
       },
       {
+        "menuName": "Test (do not use)",
+        "functionName": "testCommand",
+        "defaultShortcut": "Ctrl+Alt+Shift+2"
+      },
+      {
         "menuName": "Save GitHub API token",
         "functionName": "saveGitHubApiToken"
       },
