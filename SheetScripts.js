@@ -51,7 +51,6 @@ function updateRow() {
 
   // Cycle through all rows within the range.
   for (currRow; currRow <= bottomRow; currRow++) {
-
     var repoName = sheet.getValue(currRow, 1);
     if (!repoName) {
       Browser.msgBox("Update complete!");
@@ -87,7 +86,10 @@ function updateRow() {
 
       if ("package_name" === colType) {
         allData.package_name = currentVal;
-        allData.package_downloads = 'N/A' === currentVal ? 'N/A' : package.getPackageDownloads(currentVal)
+        allData.package_downloads =
+          "N/A" === currentVal
+            ? "N/A"
+            : package.getPackageDownloads(currentVal);
       }
 
       var value = colName ? allData[colType][colName] : allData[colType];

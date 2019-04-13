@@ -12,28 +12,24 @@ function SheetUtil() {
  * @param {string} rowNum - The row number to get.
  */
 SheetUtil.prototype.getRowValues = function(rowNum) {
-  return this
-    .getRow(rowNum)
-    .filter(function(el) {
-      return el.length;
-    });
+  return this.getRow(rowNum).filter(function(el) {
+    return el.length;
+  });
 };
 
 /**
- * 
+ *
  */
 SheetUtil.prototype.getRow = function(rowNum) {
-  return this.sheet
-    .getRange(rowNum + ':' + rowNum)
-    .getValues()[0];
-}
+  return this.sheet.getRange(rowNum + ":" + rowNum).getValues()[0];
+};
 
 /**
  * Get a value for a cell.
  *
  * @param {integer} row - The row number, 1-based.
  * @param {integer} col - The column number, 1-based.
- * 
+ *
  * @return {*}
  */
 SheetUtil.prototype.getValue = function(row, col) {
@@ -53,7 +49,7 @@ SheetUtil.prototype.setValue = function(row, col, val) {
 /**
  * Get an index of all updatable columns
  */
-SheetUtil.prototype.getUpdateIndex = function (){
+SheetUtil.prototype.getUpdateIndex = function() {
   var rowIndex = {};
   var rowValues = this.getRowValues(2);
 
@@ -64,7 +60,7 @@ SheetUtil.prototype.getUpdateIndex = function (){
   });
 
   return rowIndex;
-}
+};
 
 /**
  * Get all repo names.
