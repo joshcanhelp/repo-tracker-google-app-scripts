@@ -20,11 +20,6 @@ function saveCodecovApiToken() {
   PropertiesService.getUserProperties().setProperty("CODECOV_API_TOKEN", token);
 }
 
-function testCommand() {
-  Browser.msgBox(SpreadsheetApp.getActiveRange());
-  // Browser.msgBox("I told you not to use that ... DELETING ALL SHEETS ... JKJKJK");
-}
-
 /**
  * Updates selected row with new data.
  */
