@@ -1,7 +1,10 @@
-/* globals SpreadsheetApp, Browser, CacheService, UrlFetchApp, PropertiesService */
+/**
+ * Functions here should be tied to a command in appsscript.json.
+ */
 
 /**
  * Prompt the user for a GitHub API token.
+ * See appsscript.json for command name in Sheet > Tools > Macros.
  */
 function saveGitHubApiToken() {
   var token = SpreadsheetApp.getUi()
@@ -12,6 +15,7 @@ function saveGitHubApiToken() {
 
 /**
  * Prompt the user for a Codecov API token.
+ * See appsscript.json for command name in Sheet > Tools > Macros.
  */
 function saveCodecovApiToken() {
   var token = SpreadsheetApp.getUi()
@@ -22,6 +26,7 @@ function saveCodecovApiToken() {
 
 /**
  * Updates selected row with new data.
+ * See appsscript.json for command name in Sheet > Tools > Macros.
  */
 function updateRow() {
   // No tokens === no data.
