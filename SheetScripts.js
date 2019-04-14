@@ -24,29 +24,34 @@ function saveCodecovApiToken() {
  * Updates selected row with new data.
  */
 function updateRow() {
+  // No tokens === no data.
   if (!GitHub.prototype.tokenCheck() || !Codecov.prototype.tokenCheck()) {
     return;
   }
 
-  var currRow = SpreadsheetApp.getActiveRange().getRowIndex();
-  var bottomRow = SpreadsheetApp.getActiveRange().getLastRow();
+  var currentRowIndex = SpreadsheetApp.getActiveRange().getRowIndex();
+  var bottomRowIndex = SpreadsheetApp.getActiveRange().getLastRow();
 
-  if (!currRow || !bottomRow) {
+  // No range selected or some other issue with selected cells.
+  if (!currentRowIndex || !bottomRowIndex) {
     Browser.msgBox("Select at least one cell in a repo row to update.");
     return;
   }
 
-  if (currRow <= 2) {
+  // Can't update rows above 3.
+  if (currentRowIndex <= 2) {
     Browser.msgBox("Cannot update header row.");
     return;
   }
 
   var sheet = new SheetUtil();
-  var updateIndex = sheet.getUpdateIndex();
+  var updateColumns = sheet.getUpdateIndex();
 
-  // Cycle through all rows within the range.
-  for (currRow; currRow <= bottomRow; currRow++) {
-    var repoName = sheet.getValue(currRow, 1);
+  // Cycle through all rows within the selected range.
+  for (currentRowIndex; currentRowIndex <= bottomRowIndex; currentRowIndex++) {
+    var repoName = sheet.getValue(currentRowIndex, 1);
+
+    // The range includes empty rows at the bottom so nothing left to update.
     if (!repoName) {
       Browser.msgBox("Update complete!");
       return;
@@ -55,40 +60,47 @@ function updateRow() {
     var github = new GitHub(repoName);
     var codecov = new Codecov(repoName);
     var package = new Package();
-    var allData = {};
 
-    allData.repo = github.getRepo();
-    allData.comm = github.getCommunity();
-    allData.readme = github.getReadmeScore(allData.comm.readme_url);
-    allData.release = github.getLatestRelease();
-    allData.traffic = github.getTraffic();
-    allData.ci = github.getCi();
-    allData.coverage = codecov.getCoverage();
+    var repoData = {};
+    repoData.repo = github.getRepo();
+    repoData.comm = github.getCommunity();
+    repoData.release = github.getLatestRelease();
+    repoData.traffic = github.getTraffic();
+    repoData.ci = github.getCi();
+    repoData.coverage = codecov.getCoverage();
 
-    Object.keys(updateIndex).forEach(function(currCol) {
-      var currentVal = sheet.getValue(currRow, currCol);
-      var colNameParts = updateIndex[currCol].split("|");
-      var colType = colNameParts[0];
-      var colName = colNameParts[1];
-
-      if ("use_release_feed" === colType) {
-        allData.use_release_feed = currentVal.toUpperCase();
+    Object.keys(updateColumns).forEach(function(currentColumnIndex) {
+      var currentCellValue = sheet.getValue(
+        currentRowIndex,
+        currentColumnIndex
+      );
+      var columnNameSplit = updateColumns[currentColumnIndex].split("|");
+      var columnPrimary = columnNameSplit[0];
+      var columnSecondary = columnNameSplit[1];
+      
+      // Need the value of this column to determine whether to update release data. 
+      if ("use_release_feed" === columnPrimary) {
+        repoData.use_release_feed = currentCellValue.toUpperCase();
       }
 
-      if ("release" === colType && "NO" === allData.use_release_feed) {
-        allData.release[colName] = currentVal;
+      // Do not update release data if Use Feed is "no".
+      if ("release" === columnPrimary && "NO" === repoData.use_release_feed) {
+        repoData.release[columnSecondary] = currentCellValue;
       }
 
-      if ("package_name" === colType) {
-        allData.package_name = currentVal;
-        allData.package_downloads =
-          "N/A" === currentVal
+      // Update package download stats if there is a package name.
+      if ("package_name" === columnPrimary) {
+        repoData.package_name = currentCellValue || 'N/A';
+        repoData.package_downloads =
+          "N/A" === repoData.package_name
             ? "N/A"
-            : package.getPackageDownloads(currentVal);
+            : package.getPackageDownloads(currentCellValue);
       }
 
-      var value = colName ? allData[colType][colName] : allData[colType];
-      sheet.setValue(currRow, currCol, value);
+      var value = columnSecondary
+        ? repoData[columnPrimary][columnSecondary]
+        : repoData[columnPrimary];
+      sheet.setValue(currentRowIndex, currentColumnIndex, value);
     });
   }
 

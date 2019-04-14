@@ -71,10 +71,13 @@ GitHub.prototype.getCommunity = function() {
   }
 
   commData.health_percentage = commData.health_percentage || "N/A";
+
   commData.issue_template =
     commData.files && commData.files.issue_template ? "Yes" : "No";
+
   commData.pull_request_template =
     commData.files && commData.files.pull_request_template ? "Yes" : "No";
+
   commData.contributing =
     commData.files && commData.files.contributing ? "Yes" : "No";
 
@@ -84,6 +87,7 @@ GitHub.prototype.getCommunity = function() {
     commData.readme = "Yes";
     commData.readme_url = commData.files.readme.html_url;
   }
+  commData.readme_score = this.getReadmeScore(commData.readme_url);
 
   return commData;
 };
